@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Isto é gozar com quem estuda</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f0;
+    color: #1a1a1a;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.25rem; color: #1a1a1a; }
+  .subtitle { font-size: 14px; color: #666; margin-bottom: 1rem; }
+
+  .hero-img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  .settings-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .setting-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #444;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  .progress-wrap { margin-bottom: 1.5rem; }
+  .progress-label { font-size: 13px; color: #666; margin-bottom: 6px; }
+  .progress-bg { height: 6px; background: #ddd; border-radius: 3px; }
+  .progress-fill {
+    height: 6px;
+    background: #0F6E56;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.75rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: #E1F5EE;
+    color: #0F6E56;
+    margin-bottom: 1rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .question-num { font-size: 13px; color: #888; margin-bottom: 0.5rem; }
+  .question-text {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.55;
+    margin-bottom: 1.5rem;
+    color: #1a1a1a;
+  }
+
+  .option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 13px 16px;
+    margin-bottom: 10px;
+    background: #fafafa;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #1a1a1a;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    line-height: 1.4;
+  }
+
+  .option:hover:not(:disabled) { background: #f0f0ec; border-color: #bbb; }
+  .option:disabled { cursor: default; }
+  .option.correct { background: #EAF3DE; border-color: #3B6D11; color: #1e4a09; }
+  .option.wrong { background: #FCEBEB; border-color: #A32D2D; color: #5a1010; }
+  .option.reveal { background: #EAF3DE; border-color: #3B6D11; color: #1e4a09; }
+
+  .feedback {
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 1rem 0 0.5rem;
+    padding: 12px 14px;
+    border-radius: 8px;
+    display: none;
+  }
+  .feedback.ok { display: block; background: #EAF3DE; color: #1e4a09; }
+  .feedback.nok { display: block; background: #FCEBEB; color: #5a1010; }
+
+  .btn-next, .btn-restart {
+    margin-top: 1.25rem;
+    padding: 11px 28px;
+    background: #0F6E56;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-next:hover, .btn-restart:hover { background: #085041; }
+  .btn-next { display: none; }
+
+  .score-card { text-align: center; padding: 2.5rem 1rem; }
+  .score-num { font-size: 56px; font-weight: 700; color: #0F6E56; line-height: 1; }
+  .score-denom { font-size: 24px; color: #aaa; }
+  .score-msg { font-size: 17px; color: #555; margin-top: 1rem; }
+
+  .review-section { margin-top: 2rem; text-align: left; }
+  .review-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+  }
+  .review-item {
+    margin-bottom: 1rem;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .review-item.ok { background: #EAF3DE; color: #1e4a09; }
+  .review-item.nok { background: #FCEBEB; color: #5a1010; }
+  .review-q { font-weight: 600; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Isto é gozar com quem estuda</h1>
+  <p class="subtitle">Baseado na Síntese e Reflexão sobre TQM</p>
+
+  <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80" alt="Imagem ilustrativa sobre aprendizagem e qualidade" class="hero-img">
+
+  <div class="settings-bar">
+    <div class="setting-box">Tempo por pergunta: <strong><span id="time-display">20</span>s</strong></div>
+    <div class="setting-box">Pontuação: <strong><span id="score-display">0</span></strong></div>
+    <div class="setting-box">Tentativas máximas: <strong>2</strong></div>
+    <div class="setting-box">Feedback automático: <strong>Ativo</strong></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="prog-label">Pergunta 1 de 5</div>
+    <div class="progress-bg"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
+  </div>
+
+  <div class="card" id="quiz-card"></div>
+</div>
+
+<script>
+const TIME_PER_QUESTION = 20;
+const MAX_ATTEMPTS = 2;
+
+const questions = [
+  {
+    q: "De acordo com a síntese, a TQM define-se essencialmente como:",
+    opts: [
+      "Um conjunto de técnicas parcelares aplicadas pelo departamento de qualidade",
+      "Uma filosofia abrangente de gestão que envolve todos os membros da organização",
+      "Um sistema de inspeção do produto final para detetar erros",
+      "Um modelo exclusivo para grandes empresas industriais"
+    ],
+    ans: 1,
+    exp: "A TQM não é apenas um conjunto de técnicas parcelares. Trata-se de uma filosofia abrangente de gestão que exige o envolvimento de toda a organização."
+  },
+  {
+    q: "Qual foi o contexto histórico que impulsionou a adoção sistémica da TQM no Japão nos anos 50?",
+    opts: [
+      "A necessidade de cumprir normas da União Europeia de qualidade",
+      "A recuperação económica e competitividade industrial após a Segunda Guerra Mundial",
+      "A globalização dos mercados financeiros na década de 1950",
+      "A pressão dos sindicatos japoneses por melhores condições laborais"
+    ],
+    ans: 1,
+    exp: "O Japão adotou a TQM como filosofia cultural e estratégia de negócio para reforçar a recuperação económica e a competitividade após a Segunda Guerra Mundial."
+  },
+  {
+    q: "O conceito japonês de Kaizen, referido na síntese, caracteriza-se por:",
+    opts: [
+      "Mudanças radicais e disruptivas lideradas exclusivamente pela gestão de topo",
+      "Inspeção sistemática do produto final antes da entrega ao cliente",
+      "Mudanças incrementais realizadas por todos os colaboradores, instalando uma cultura de melhoria constante",
+      "Certificação periódica de processos segundo a norma ISO 9001"
+    ],
+    ans: 2,
+    exp: "O Kaizen baseia-se em pequenas melhorias contínuas realizadas por todos os colaboradores, promovendo uma cultura constante de aperfeiçoamento."
+  },
+  {
+    q: "A crítica à TQM como 'moda de gestão', sobretudo nos anos 80 e 90, é abordada na síntese como:",
+    opts: [
+      "Uma crítica válida que invalida definitivamente o paradigma da qualidade total",
+      "Um alerta legítimo sobre aplicações superficiais, mas que não invalida o paradigma se implementado com seriedade",
+      "Uma perspetiva ultrapassada que não tem qualquer fundamento nos materiais",
+      "Uma consequência direta da adoção do modelo EFQM pelas empresas ocidentais"
+    ],
+    ans: 1,
+    exp: "A crítica é vista como um alerta contra aplicações superficiais. No entanto, não invalida a TQM quando esta é aplicada com seriedade, continuidade e integração."
+  },
+  {
+    q: "Segundo a síntese, de que forma a TQM evoluiu desde os anos 2000?",
+    opts: [
+      "Foi substituída integralmente pelo modelo Six Sigma, tornando-se obsoleta",
+      "Manteve-se inalterada, resistindo a qualquer integração com novas metodologias",
+      "Integrou-se com Lean, Six Sigma e Agile, persistindo sob designações como Excelência Operacional e modelos como o EFQM e ISO 9001",
+      "Passou a aplicar-se exclusivamente ao setor dos serviços financeiros"
+    ],
+    ans: 2,
+    exp: "Desde os anos 2000, a TQM integrou-se com metodologias como Lean, Six Sigma e Agile, mantendo relevância sob novas designações e modelos."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+let results = [];
+let attemptsLeft = MAX_ATTEMPTS;
+let timer = TIME_PER_QUESTION;
+let interval = null;
+
+function updateTopBar() {
+  document.getElementById("time-display").textContent = timer;
+  document.getElementById("score-display").textContent = score;
+}
+
+function startTimer() {
+  clearInterval(interval);
+  timer = TIME_PER_QUESTION;
+  updateTopBar();
+
+  interval = setInterval(() => {
+    timer--;
+    updateTopBar();
+
+    if (timer <= 0) {
+      clearInterval(interval);
+      if (!answered) {
+        autoFailQuestion();
+      }
+    }
+  }, 1000);
+}
+
+function autoFailQuestion() {
+  answered = true;
+  const q = questions[current];
+  q.opts.forEach((_, idx) => {
+    const b = document.getElementById("opt" + idx);
+    b.disabled = true;
+    if (idx === q.ans) b.classList.add("reveal");
+  });
+
+  const fb = document.getElementById("fb");
+  fb.className = "feedback nok";
+  fb.innerHTML = "<strong>Tempo esgotado.</strong> " + q.exp;
+
+  results.push({ correct: false });
+  document.getElementById("nxt").style.display = "inline-block";
+}
+
+function render() {
+  const card = document.getElementById("quiz-card");
+
+  if (current >= questions.length) {
+    clearInterval(interval);
+    document.getElementById("prog-label").textContent = "Quiz concluído";
+    document.getElementById("pbar").style.width = "100%";
+
+    const msg =
+      score === 5 ? "Perfeito! Dominaste o tema." :
+      score >= 4 ? "Muito bom! Quase perfeito." :
+      score >= 3 ? "Bom resultado. Revê os erros." :
+      "Vale a pena reler a síntese.";
+
+    const rev = results.map((r, i) =>
+      `<div class="review-item ${r.correct ? "ok" : "nok"}">
+        <div class="review-q">${i + 1}. ${questions[i].q}</div>
+        <div>${r.correct ? "Correto" : "Resposta correta: " + String.fromCharCode(65 + questions[i].ans) + ") " + questions[i].opts[questions[i].ans]}</div>
+      </div>`
+    ).join("");
+
+    card.innerHTML = `
+      <div class="score-card">
+        <div><span class="score-num">${score}</span><span class="score-denom"> / ${questions.length}</span></div>
+        <div class="score-msg">${msg}</div>
+        <button class="btn-restart" onclick="restart()">Recomeçar</button>
+        <div class="review-section">
+          <div class="review-title">Resumo das respostas</div>
+          ${rev}
+        </div>
+      </div>`;
+    return;
+  }
+
+  const q = questions[current];
+  document.getElementById("prog-label").textContent = `Pergunta ${current + 1} de ${questions.length}`;
+  document.getElementById("pbar").style.width = ((current / questions.length) * 100) + "%";
+  answered = false;
+  attemptsLeft = MAX_ATTEMPTS;
+
+  card.innerHTML = `
+    <span class="tag">TQM</span>
+    <div class="question-num">Pergunta ${current + 1} de ${questions.length}</div>
+    <div class="question-text">${q.q}</div>
+    ${q.opts.map((o, i) => `<button class="option" id="opt${i}" onclick="pick(${i})">${String.fromCharCode(65 + i)}) ${o}</button>`).join("")}
+    <div class="feedback" id="fb"></div>
+    <button class="btn-next" id="nxt" onclick="next()">${current === questions.length - 1 ? "Ver resultado →" : "Próxima pergunta →"}</button>
+  `;
+
+  startTimer();
+}
+
+function pick(i) {
+  if (answered) return;
+
+  const q = questions[current];
+  const fb = document.getElementById("fb");
+
+  if (i === q.ans) {
+    answered = true;
+    clearInterval(interval);
+
+    q.opts.forEach((_, idx) => {
+      const b = document.getElementById("opt" + idx);
+      b.disabled = true;
+      if (idx === q.ans) b.classList.add("correct");
+    });
+
+    fb.className = "feedback ok";
+    fb.innerHTML = "<strong>Correto!</strong> " + q.exp;
+    score++;
+    updateTopBar();
+    results.push({ correct: true });
+    document.getElementById("nxt").style.display = "inline-block";
+    return;
+  }
+
+  attemptsLeft--;
+  document.getElementById("opt" + i).disabled = true;
+  document.getElementById("opt" + i).classList.add("wrong");
+
+  if (attemptsLeft > 0) {
+    fb.className = "feedback nok";
+    fb.innerHTML = `<strong>Incorreto.</strong> Ainda tens mais ${attemptsLeft} tentativa.`;
+  } else {
+    answered = true;
+    clearInterval(interval);
+
+    q.opts.forEach((_, idx) => {
+      const b = document.getElementById("opt" + idx);
+      b.disabled = true;
+      if (idx === q.ans) b.classList.add("reveal");
+    });
+
+    fb.className = "feedback nok";
+    fb.innerHTML = "<strong>Incorreto.</strong> " + q.exp;
+    results.push({ correct: false });
+    document.getElementById("nxt").style.display = "inline-block";
+  }
+}
+
+function next() {
+  current++;
+  render();
+}
+
+function restart() {
+  clearInterval(interval);
+  current = 0;
+  score = 0;
+  answered = false;
+  results = [];
+  attemptsLeft = MAX_ATTEMPTS;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
